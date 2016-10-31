@@ -38,7 +38,9 @@ static DEFINE_IDR(zram_index_idr);
 static DEFINE_MUTEX(zram_index_mutex);
 
 static int zram_major;
-static const char *default_compressor = "lzo";
+
+static struct zram *zram_devices;
+static const char *default_compressor = "lz4";
 
 /*
  * We don't need to see memory allocation errors more than once every 1
@@ -1288,7 +1290,7 @@ static int zram_add(void)
 	}
 	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
 	zram->meta = NULL;
-	zram->max_comp_streams = 1;
+	zram->max_comp_streams = CONFIG_NR_CPUS;
 
 	pr_info("Added device: %s\n", zram->disk->disk_name);
 	return device_id;
